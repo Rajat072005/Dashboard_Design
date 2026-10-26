@@ -1,26 +1,291 @@
+/* ==========================================================================
+   DESIGN SYSTEM — globals.css
+   Single source of truth for all CSS variables.
+   Components must use these variables only — never hard-coded colors.
+   Palette: white / grey / green only.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Tailwind base — must come first so our :root overrides its defaults
+   -------------------------------------------------------------------------- */
 @import "tailwindcss";
 
+/* --------------------------------------------------------------------------
+   LIGHT THEME (default / :root)
+   -------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Colors --- */
+  --color-bg:           #F6F7F6;
+  --color-surface:      #FFFFFF;
+  --color-raised:       #FFFFFF;
+  --color-border:       #E5E8E6;
+  --color-text:         #111816;
+  --color-muted:        #6A746F;
+  --color-accent:       #167352;   /* Calibrated for WCAG AA (5.12:1 on accent-soft, 5.82:1 on surface) */
+  --color-accent-hover: #125E43;
+  --color-accent-soft:  #E8F3EE;
+  --color-hero:         #0F4A38;
+  --color-hero-text:    #E8EFEB;
+  --color-hero-muted:   #CBD7D0;   /* WCAG AAA (6.89:1 on hero) */
+  --color-danger:       #B4443A;
+  --color-hover:        #F2F4F2;
+  --color-btn-text:     #FFFFFF;
+
+  /* --- Typography --- */
+  --font-sans:          'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --text-number:        32px;
+  --text-title:         16px;
+  --text-meta:          13px;
+
+  --font-number:        600;
+  --font-title:         500;
+  --font-meta:          400;
+
+  /* --- Radii --- */
+  --radius-card:        12px;
+  --radius-button:      8px;
+
+  /* --- Spacing --- */
+  --space-unit:         24px;
+
+  /* --- Transitions (150ms color / opacity / background-color only) --- */
+  --transition-color:   color 150ms ease, background-color 150ms ease,
+                        border-color 150ms ease, fill 150ms ease,
+                        stroke 150ms ease;
+  --transition-opacity: opacity 150ms ease;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* --------------------------------------------------------------------------
+   DARK THEME
+   -------------------------------------------------------------------------- */
+[data-theme="dark"] {
+  --color-bg:           #0B0F0D;
+  --color-surface:      #121816;
+  --color-raised:       #192019;
+  --color-border:       #232B27;
+  --color-text:         #E8EFEB;
+  --color-muted:        #8A958F;
+  --color-accent:       #3DBE8B;
+  --color-accent-hover: #33A377;
+  --color-accent-soft:  #13251D;
+  --color-hero:         #144D3B;
+  --color-hero-text:    #E8EFEB;
+  --color-hero-muted:   #CBD7D0;   /* WCAG AAA (6.58:1 on hero) */
+  --color-danger:       #E0685C;
+  --color-hover:        #192019;
+  --color-btn-text:     #0B0F0D;   /* Dark text on bright emerald: WCAG AAA 8.21:1 */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* --------------------------------------------------------------------------
+   Hard reset — override Tailwind preflight on html/body
+   -------------------------------------------------------------------------- */
+html,
+body {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text) !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--text-meta);
+  font-weight: var(--font-meta);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: var(--transition-color);
+}
+
+/* --------------------------------------------------------------------------
+   Scrollbars
+   -------------------------------------------------------------------------- */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-muted); }
+
+/* --------------------------------------------------------------------------
+   Page load fade-in (single subtle opacity transition, no bounce/scale)
+   -------------------------------------------------------------------------- */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.fade-in {
+  animation: pageFadeIn 150ms ease-out forwards;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive rows (subtle background shift, 150ms transition)
+   -------------------------------------------------------------------------- */
+.interactive-row {
+  transition: background-color 150ms ease, opacity 150ms ease;
+  border-radius: var(--radius-button);
+}
+
+.interactive-row:hover {
+  background-color: var(--color-hover);
+}
+
+/* --------------------------------------------------------------------------
+   Layout Grid & Responsive (12-col desktop, 1-col below 900px)
+   -------------------------------------------------------------------------- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-unit);
+}
+
+.grid-hero {
+  grid-column: span 8;
+}
+
+.grid-upnext {
+  grid-column: span 4;
+}
+
+.grid-full {
+  grid-column: span 12;
+}
+
+/* --------------------------------------------------------------------------
+   Stat Strip Component
+   -------------------------------------------------------------------------- */
+.stat-strip-container {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.stat-strip-col {
+  padding: 24px 32px;
+  text-align: center;
+}
+
+.stat-strip-divider {
+  border-left: 1px solid var(--color-border);
+}
+
+.stat-strip-num {
+  font-size: var(--text-number);
+  font-weight: var(--font-number);
+  color: var(--color-text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-strip-unit {
+  font-size: var(--text-meta);
+  font-weight: var(--font-meta);
+  color: var(--color-muted);
+  margin-left: 4px;
+}
+
+.stat-strip-label {
+  margin-top: 6px;
+  font-size: var(--text-meta);
+  color: var(--color-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Header Component
+   -------------------------------------------------------------------------- */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: var(--space-unit);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--radius-button);
+  padding: 0 12px;
+  height: 34px;
+  width: 220px;
+  transition: var(--transition-color);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Breakpoints (Stack to 1 column below 900px, collapse sidebar)
+   -------------------------------------------------------------------------- */
+@media (max-width: 899.98px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .grid-hero,
+  .grid-upnext,
+  .grid-full {
+    grid-column: span 1;
+  }
+
+  /* Stat strip becomes 3 compact columns */
+  .stat-strip-col {
+    padding: 12px 6px;
+  }
+
+  .stat-strip-num {
+    font-size: 20px;
+  }
+
+  .stat-strip-unit {
+    font-size: 11px;
+    margin-left: 2px;
+  }
+
+  .stat-strip-label {
+    margin-top: 4px;
+    font-size: 11px;
+  }
+
+  /* Force collapse sidebar below 900px */
+  .sidebar-dock {
+    width: 72px !important;
+  }
+
+  .sidebar-expanded-content {
+    display: none !important;
+  }
+
+  .sidebar-toggle-btn {
+    display: none !important;
+  }
+
+  .dashboard-main {
+    margin-left: 72px !important;
+    padding: 16px !important;
+  }
+
+  .dashboard-header {
+    gap: 12px;
+    padding-bottom: 16px;
+  }
+
+  .header-search {
+    width: 150px;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .header-countdown {
+    display: none;
+  }
+
+  .header-search {
+    width: 120px;
+  }
 }
